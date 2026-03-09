@@ -1,0 +1,5 @@
+{
+  "testEnvironment": "jsdom",
+  "moduleFileExtensions": ["js"],
+  "transform": {}
+}

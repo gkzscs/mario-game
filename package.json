@@ -1,0 +1,20 @@
+{
+  "name": "pixel-adventurer",
+  "version": "1.0.0",
+  "description": "经典平台跳跃风格游戏 - 个人学习项目",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "keywords": ["game", "platformer", "html5", "canvas", "javascript"],
+  "author": "gkzscs",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "jest": "^29.7.0"
+  }
+}
