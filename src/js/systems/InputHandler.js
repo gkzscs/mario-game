@@ -9,7 +9,10 @@ export class InputHandler {
             left: false,
             right: false,
             up: false,
-            jump: false
+            jump: false,
+            useItem: false,
+            nextItem: false,
+            prevItem: false
         };
 
         this.bindEvents();
@@ -41,13 +44,25 @@ export class InputHandler {
                 this.keys.up = isPressed;
                 if (isPressed) this.keys.jump = true;
                 break;
+            case 'KeyF':
+                if (isPressed) this.keys.useItem = true;
+                break;
+            case 'KeyE':
+                if (isPressed) this.keys.nextItem = true;
+                break;
+            case 'KeyQ':
+                if (isPressed) this.keys.prevItem = true;
+                break;
         }
     }
 
     getInput() {
         const input = { ...this.keys };
-        // 重置跳跃键（只触发一次）
+        // 重置单次触发的按键
         this.keys.jump = false;
+        this.keys.useItem = false;
+        this.keys.nextItem = false;
+        this.keys.prevItem = false;
         return input;
     }
 }

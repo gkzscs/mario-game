@@ -33,12 +33,18 @@ body {
     right: 10px;
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
+    font-size: 12px;
     text-shadow: 2px 2px 0 #000;
     pointer-events: none;
 }
 
-#start-screen, #game-over-screen {
+#ui-overlay div {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+#start-screen, #game-over-screen, #victory-screen, #level-complete-screen {
     position: absolute;
     top: 0;
     left: 0;
@@ -52,22 +58,39 @@ body {
     text-align: center;
 }
 
-#start-screen h1, #game-over-screen h1 {
-    font-size: 32px;
+#start-screen h1, #game-over-screen h1, #victory-screen h1, #level-complete-screen h1 {
+    font-size: 28px;
     margin-bottom: 10px;
     color: #ffd700;
     text-shadow: 3px 3px 0 #ff6b6b;
 }
 
-#start-screen p {
-    font-size: 14px;
-    color: #aaa;
-    margin-bottom: 30px;
+#victory-screen h1 {
+    font-size: 32px;
+    color: #4CAF50;
+    animation: pulse 1s infinite;
 }
 
-#start-btn, #restart-btn {
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+#start-screen p, #level-complete-screen p {
+    font-size: 12px;
+    color: #aaa;
+    margin-bottom: 20px;
+}
+
+#game-over-screen p, #victory-screen p {
+    font-size: 14px;
+    color: #ddd;
+    margin: 15px 0;
+}
+
+#start-btn, #restart-btn, #restart-btn-victory, #continue-btn {
     padding: 15px 40px;
-    font-size: 16px;
+    font-size: 14px;
     font-family: inherit;
     background: linear-gradient(180deg, #4CAF50 0%, #45a049 100%);
     color: white;
@@ -77,34 +100,66 @@ body {
     text-shadow: 2px 2px 0 #2d5a30;
     box-shadow: 0 4px 0 #2d5a30;
     transition: transform 0.1s, box-shadow 0.1s;
+    margin: 10px;
 }
 
-#start-btn:hover, #restart-btn:hover {
+#start-btn:hover, #restart-btn:hover, #restart-btn-victory:hover, #continue-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 0 #2d5a30;
 }
 
-#start-btn:active, #restart-btn:active {
+#start-btn:active, #restart-btn:active, #restart-btn-victory:active, #continue-btn:active {
     transform: translateY(2px);
     box-shadow: 0 2px 0 #2d5a30;
 }
 
-.controls-info {
-    margin-top: 40px;
-    font-size: 12px;
-    color: #888;
+#continue-btn {
+    background: linear-gradient(180deg, #2196F3 0%, #1976D2 100%);
+    box-shadow: 0 4px 0 #0D47A1;
 }
 
-.controls-info p {
-    margin: 8px 0;
+.controls-info, .items-info {
+    margin-top: 30px;
+    font-size: 11px;
+    color: #888;
+    line-height: 1.8;
+}
+
+.items-info {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+}
+
+.items-info p {
+    margin: 5px 0;
 }
 
 .hidden {
     display: none !important;
 }
 
-#final-score {
+#final-score, #victory-score {
     font-size: 24px;
     color: #ffd700;
-    margin: 20px 0;
+    margin: 10px 0;
+}
+
+#next-level-num {
+    font-size: 32px;
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+/* 响应式 */
+@media (max-width: 850px) {
+    #game-container {
+        transform: scale(0.9);
+    }
+}
+
+@media (max-width: 750px) {
+    #game-container {
+        transform: scale(0.75);
+    }
 }

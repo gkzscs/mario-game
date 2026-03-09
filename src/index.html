@@ -11,6 +11,7 @@
         <canvas id="gameCanvas" width="800" height="600"></canvas>
         <div id="ui-overlay">
             <div id="score">分数: <span id="score-value">0</span></div>
+            <div id="level">关卡: <span id="level-value">1</span></div>
             <div id="lives">生命: <span id="lives-value">3</span></div>
             <div id="coins">金币: <span id="coins-value">0</span></div>
         </div>
@@ -22,12 +23,30 @@
                 <p>操作说明:</p>
                 <p>← → 或 A D: 移动</p>
                 <p>↑ 或 W 或 空格: 跳跃</p>
+                <p>Q/E: 选择道具</p>
+                <p>F: 使用道具</p>
+            </div>
+            <div class="items-info">
+                <p>道具效果:</p>
+                <p>⚡ 速度提升 | 🛡 护盾</p>
+                <p>⬆⬆ 双跳 | ❤ 额外生命</p>
+                <p>⭐ 无敌星星</p>
             </div>
         </div>
         <div id="game-over-screen" class="hidden">
             <h1>游戏结束</h1>
             <p>最终分数: <span id="final-score">0</span></p>
             <button id="restart-btn">重新开始</button>
+        </div>
+        <div id="victory-screen" class="hidden">
+            <h1>🎉 恭喜通关!</h1>
+            <p>最终分数: <span id="victory-score">0</span></p>
+            <button id="restart-btn-victory">再玩一次</button>
+        </div>
+        <div id="level-complete-screen" class="hidden">
+            <h1>关卡完成!</h1>
+            <p>进入第 <span id="next-level-num">2</span> 关</p>
+            <button id="continue-btn">继续</button>
         </div>
     </div>
     <script type="module" src="./js/main.js"></script>
