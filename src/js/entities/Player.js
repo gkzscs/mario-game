@@ -3,7 +3,7 @@
  * 处理玩家的移动、跳跃和碰撞
  */
 
-import { Inventory } from './systems/Inventory.js';
+import { Inventory } from '../systems/Inventory.js';
 
 export class Player {
     constructor(x, y) {
