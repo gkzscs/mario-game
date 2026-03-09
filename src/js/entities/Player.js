@@ -23,6 +23,12 @@ export class Player {
         // 状态
         this.onGround = false;
         this.facingRight = true;
+        this.isMoving = false;
+
+        // 动画
+        this.animFrame = 0;
+        this.animTimer = 0;
+        this.animSpeed = 100; // 毫秒
 
         // 道具效果
         this.speedBoost = 0;
@@ -42,13 +48,19 @@ export class Player {
         // 更新道具效果时间
         this.updateEffects(deltaTime);
 
+        // 更新动画
+        this.updateAnimation(deltaTime);
+
         // 水平移动
+        this.isMoving = false;
         if (input.left) {
             this.vx = -this.speed;
             this.facingRight = false;
+            this.isMoving = true;
         } else if (input.right) {
             this.vx = this.speed;
             this.facingRight = true;
+            this.isMoving = true;
         } else {
             this.vx *= this.friction;
         }
@@ -112,6 +124,22 @@ export class Player {
         }
 
         return null;
+    }
+
+    updateAnimation(deltaTime) {
+        if (this.isMoving && this.onGround) {
+            this.animTimer += deltaTime;
+            if (this.animTimer >= this.animSpeed) {
+                this.animTimer = 0;
+                this.animFrame = (this.animFrame + 1) % 4;
+            }
+        } else if (!this.onGround) {
+            // 跳跃/下落动画
+            this.animFrame = this.vy < 0 ? 4 : 5;
+        } else {
+            // 站立
+            this.animFrame = 0;
+        }
     }
 
     updateEffects(deltaTime) {
@@ -195,9 +223,37 @@ export class Player {
             }
         }
 
-        // 身体
-        ctx.fillStyle = this.invincible ? '#FFD700' : '#FF6B6B';
-        ctx.fillRect(this.x, this.y + 10, this.width, this.height - 10);
+        // 根据动画帧绘制角色
+        this.renderAnimatedPlayer(ctx);
+
+        // 双跳指示
+        if (this.canDoubleJump) {
+            ctx.fillStyle = '#32CD32';
+            ctx.fillRect(this.x + 12, this.y + this.height + 2, 8, 4);
+        }
+
+        ctx.restore();
+    }
+
+    renderAnimatedPlayer(ctx) {
+        const bodyColor = this.invincible ? '#FFD700' : '#FF6B6B';
+        const hatColor = this.invincible ? '#FFD700' : '#FF4757';
+
+        // 腿部偏移（行走动画）
+        let legOffset = 0;
+        if (this.isMoving && this.onGround) {
+            legOffset = Math.sin(this.animFrame * Math.PI / 2) * 4;
+        }
+
+        // 跳跃/下落时的腿部姿势
+        let legSpread = 0;
+        if (!this.onGround) {
+            legSpread = this.vy < 0 ? -3 : 3;
+        }
+
+        // 帽子
+        ctx.fillStyle = hatColor;
+        ctx.fillRect(this.x + 2, this.y - 5, this.width - 4, 8);
 
         // 头部
         ctx.fillStyle = '#FFE66D';
@@ -207,16 +263,43 @@ export class Player {
         ctx.fillStyle = '#000';
         ctx.fillRect(this.x + 18, this.y + 5, 5, 5);
 
-        // 帽子
-        ctx.fillStyle = this.invincible ? '#FFD700' : '#FF4757';
-        ctx.fillRect(this.x + 2, this.y - 5, this.width - 4, 8);
+        // 身体
+        ctx.fillStyle = bodyColor;
+        ctx.fillRect(this.x + 4, this.y + 15, this.width - 8, 15);
 
-        // 双跳指示
-        if (this.canDoubleJump) {
-            ctx.fillStyle = '#32CD32';
-            ctx.fillRect(this.x + 12, this.y + this.height + 2, 8, 4);
+        // 腿部（动画）
+        ctx.fillStyle = '#4169E1';
+
+        if (this.onGround) {
+            // 站立/行走
+            if (this.isMoving) {
+                // 行走动画 - 腿交替移动
+                ctx.fillRect(this.x + 6 - legOffset, this.y + 30, 8, 10);
+                ctx.fillRect(this.x + 18 + legOffset, this.y + 30, 8, 10);
+            } else {
+                // 站立
+                ctx.fillRect(this.x + 6, this.y + 30, 8, 10);
+                ctx.fillRect(this.x + 18, this.y + 30, 8, 10);
+            }
+        } else {
+            // 跳跃/下落
+            ctx.fillRect(this.x + 4 - legSpread, this.y + 30, 8, 10);
+            ctx.fillRect(this.x + 20 + legSpread, this.y + 30, 8, 10);
         }
 
-        ctx.restore();
+        // 鞋子
+        ctx.fillStyle = '#8B4513';
+        if (this.onGround) {
+            if (this.isMoving) {
+                ctx.fillRect(this.x + 4 - legOffset, this.y + 38, 10, 4);
+                ctx.fillRect(this.x + 18 + legOffset, this.y + 38, 10, 4);
+            } else {
+                ctx.fillRect(this.x + 4, this.y + 38, 10, 4);
+                ctx.fillRect(this.x + 18, this.y + 38, 10, 4);
+            }
+        } else {
+            ctx.fillRect(this.x + 2 - legSpread, this.y + 38, 10, 4);
+            ctx.fillRect(this.x + 20 + legSpread, this.y + 38, 10, 4);
+        }
     }
 }

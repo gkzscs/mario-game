@@ -432,11 +432,8 @@ export class Game {
         // 重置相机变换
         this.camera.resetTransform(this.ctx);
 
-        // 绘制背包UI
+        // 绘制UI（顶部状态栏和背包）
         this.renderInventoryUI();
-
-        // 绘制关卡进度
-        this.renderLevelProgress();
     }
 
     renderClouds() {
@@ -479,67 +476,79 @@ export class Game {
         const items = inventory.getItems();
         const selectedIndex = inventory.selectedIndex;
 
-        // 背包背景
-        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-        this.ctx.fillRect(10, this.height - 60, 270, 50);
+        // 顶部UI栏背景 - 包含状态信息和背包
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        this.ctx.fillRect(0, 0, this.width, 50);
+
+        // 状态信息（左侧）
+        this.ctx.fillStyle = '#FFF';
+        this.ctx.font = 'bold 14px Arial';
+        this.ctx.fillText(`分数: ${this.score}`, 15, 32);
+        this.ctx.fillStyle = '#FF6B6B';
+        this.ctx.fillText(`❤ ${this.lives}`, 120, 32);
+        this.ctx.fillStyle = '#FFD700';
+        this.ctx.fillText(`金币: ${this.coins}`, 180, 32);
+
+        // 背包区域（右侧）
+        const backpackX = this.width - 270;
+
+        // 背包标题
+        this.ctx.fillStyle = '#AAA';
+        this.ctx.font = '10px Arial';
+        this.ctx.fillText('背包 (Q/E选择 F使用)', backpackX, 12);
 
         // 绘制槽位
         for (let i = 0; i < inventory.maxSlots; i++) {
-            const x = 20 + i * 50;
-            const y = this.height - 55;
+            const x = backpackX + i * 50;
+            const y = 18;
 
             // 槽位背景
-            this.ctx.fillStyle = i === selectedIndex ? 'rgba(255, 215, 0, 0.5)' : 'rgba(100, 100, 100, 0.5)';
-            this.ctx.fillRect(x, y, 40, 40);
+            this.ctx.fillStyle = i === selectedIndex ? 'rgba(255, 215, 0, 0.5)' : 'rgba(60, 60, 60, 0.8)';
+            this.ctx.fillRect(x, y, 40, 28);
 
             // 槽位边框
-            this.ctx.strokeStyle = i === selectedIndex ? '#FFD700' : '#666';
+            this.ctx.strokeStyle = i === selectedIndex ? '#FFD700' : '#888';
             this.ctx.lineWidth = 2;
-            this.ctx.strokeRect(x, y, 40, 40);
+            this.ctx.strokeRect(x, y, 40, 28);
 
             // 道具图标
             if (items[i]) {
-                this.renderItemIcon(this.ctx, x + 8, y + 8, items[i].type);
+                this.renderItemIcon(this.ctx, x + 8, y + 4, items[i].type, 12);
 
                 // 数量
                 if (items[i].count > 1) {
                     this.ctx.fillStyle = '#FFF';
-                    this.ctx.font = 'bold 12px Arial';
-                    this.ctx.fillText('x' + items[i].count, x + 22, y + 35);
+                    this.ctx.font = 'bold 10px Arial';
+                    this.ctx.fillText('x' + items[i].count, x + 24, y + 24);
                 }
             }
         }
-
-        // 操作提示
-        this.ctx.fillStyle = '#AAA';
-        this.ctx.font = '10px Arial';
-        this.ctx.fillText('Q/E:选择  F:使用', 15, this.height - 8);
     }
 
-    renderItemIcon(ctx, x, y, type) {
+    renderItemIcon(ctx, x, y, type, size = 16) {
         ctx.save();
         switch (type) {
             case 'speed':
                 ctx.fillStyle = '#FFD700';
                 ctx.beginPath();
-                ctx.moveTo(x + 8, y);
-                ctx.lineTo(x + 2, y + 8);
-                ctx.lineTo(x + 6, y + 8);
-                ctx.lineTo(x + 4, y + 16);
-                ctx.lineTo(x + 14, y + 6);
-                ctx.lineTo(x + 10, y + 6);
-                ctx.lineTo(x + 12, y);
+                ctx.moveTo(x + size/2, y);
+                ctx.lineTo(x + size/8, y + size/2);
+                ctx.lineTo(x + size*3/8, y + size/2);
+                ctx.lineTo(x + size/4, y + size);
+                ctx.lineTo(x + size*7/8, y + size*3/8);
+                ctx.lineTo(x + size*5/8, y + size*3/8);
+                ctx.lineTo(x + size*3/4, y);
                 ctx.closePath();
                 ctx.fill();
                 break;
             case 'shield':
                 ctx.fillStyle = '#4169E1';
                 ctx.beginPath();
-                ctx.moveTo(x + 8, y);
-                ctx.lineTo(x + 16, y + 4);
-                ctx.lineTo(x + 16, y + 10);
-                ctx.quadraticCurveTo(x + 8, y + 16, x, y + 10);
-                ctx.lineTo(x, y + 4);
+                ctx.moveTo(x + size/2, y);
+                ctx.lineTo(x + size, y + size/4);
+                ctx.lineTo(x + size, y + size*5/8);
+                ctx.quadraticCurveTo(x + size/2, y + size, x, y + size*5/8);
+                ctx.lineTo(x, y + size/4);
                 ctx.closePath();
                 ctx.fill();
                 break;
@@ -547,38 +556,38 @@ export class Game {
                 ctx.fillStyle = '#32CD32';
                 // 上箭头
                 ctx.beginPath();
-                ctx.moveTo(x + 8, y);
-                ctx.lineTo(x + 14, y + 6);
-                ctx.lineTo(x + 2, y + 6);
+                ctx.moveTo(x + size/2, y);
+                ctx.lineTo(x + size*3/4, y + size*3/8);
+                ctx.lineTo(x + size/4, y + size*3/8);
                 ctx.closePath();
                 ctx.fill();
                 // 下箭头
                 ctx.beginPath();
-                ctx.moveTo(x + 8, y + 8);
-                ctx.lineTo(x + 14, y + 14);
-                ctx.lineTo(x + 2, y + 14);
+                ctx.moveTo(x + size/2, y + size/2);
+                ctx.lineTo(x + size*3/4, y + size*7/8);
+                ctx.lineTo(x + size/4, y + size*7/8);
                 ctx.closePath();
                 ctx.fill();
                 break;
             case 'extraLife':
                 ctx.fillStyle = '#FF69B4';
                 ctx.beginPath();
-                ctx.moveTo(x + 8, y + 4);
-                ctx.bezierCurveTo(x + 8, y + 2, x + 6, y, x + 3, y + 2);
-                ctx.bezierCurveTo(x, y + 4, x + 2, y + 8, x + 8, y + 14);
-                ctx.bezierCurveTo(x + 14, y + 8, x + 16, y + 4, x + 13, y + 2);
-                ctx.bezierCurveTo(x + 10, y, x + 8, y + 2, x + 8, y + 4);
+                ctx.moveTo(x + size/2, y + size/4);
+                ctx.bezierCurveTo(x + size/2, y + size/8, x + size*3/8, y, x + size/6, y + size/8);
+                ctx.bezierCurveTo(x, y + size/4, x + size/8, y + size/2, x + size/2, y + size*7/8);
+                ctx.bezierCurveTo(x + size*7/8, y + size/2, x + size, y + size/4, x + size*5/6, y + size/8);
+                ctx.bezierCurveTo(x + size*5/8, y, x + size/2, y + size/8, x + size/2, y + size/4);
                 ctx.fill();
                 break;
             case 'star':
                 ctx.fillStyle = '#FFD700';
-                const cx = x + 8;
-                const cy = y + 8;
+                const cx = x + size/2;
+                const cy = y + size/2;
                 ctx.beginPath();
                 for (let i = 0; i < 5; i++) {
                     const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
-                    const px = cx + Math.cos(angle) * 8;
-                    const py = cy + Math.sin(angle) * 8;
+                    const px = cx + Math.cos(angle) * (size/2);
+                    const py = cy + Math.sin(angle) * (size/2);
                     if (i === 0) ctx.moveTo(px, py);
                     else ctx.lineTo(px, py);
                 }
@@ -587,21 +596,5 @@ export class Game {
                 break;
         }
         ctx.restore();
-    }
-
-    renderLevelProgress() {
-        // 进度条背景
-        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-        this.ctx.fillRect(this.width - 160, 10, 150, 20);
-
-        // 进度条
-        const progress = this.player.x / this.levelWidth;
-        this.ctx.fillStyle = '#4CAF50';
-        this.ctx.fillRect(this.width - 158, 12, 146 * progress, 16);
-
-        // 进度文字
-        this.ctx.fillStyle = '#FFF';
-        this.ctx.font = '12px Arial';
-        this.ctx.fillText(`关卡 ${this.currentLevel}/${this.maxLevel}`, this.width - 155, 24);
     }
 }
